@@ -4,17 +4,16 @@ var User = require('../models/user');
 var Student = require('../models/student');
 
 var addUser = function(req, res){
-  console.log(req.body);
   if(!req.body.enrollment || !req.body.password)
-    res.json({success: false, msg: "Invalid Credentials."});
+    return res.status(400).json({success: false, msg: "Invalid Credentials."});
   else{
     if(req.body.enrollment.length != 11){
-      return res.json({success: false, msg: "Invalid Credentials."});
+      return res.status(400).json({success: false, msg: "Invalid Credentials."});
     }
     User.find({"enrollment": req.body.enrollment}, function(err, users){
-      if(err) res.json({success: false, msg: "Invalid Credentials."});
+      if(err) return res.status(400).json({success: false, msg: "Invalid Credentials."});
       if(users.length != 0)
-        return res.json({success: false, msg: "Invalid Credentials."});
+        return res.status(400).json({success: false, msg: "Invalid Credentials."});
       else{
         var user = new User({
           enrollment: req.body.enrollment,
@@ -22,8 +21,9 @@ var addUser = function(req, res){
           admin: req.body.admin || true
         });
         user.save(function(err){
-          if(err)
-            res.json({success: false, msg: "Unable to create User."});
+          if(err){
+            return res.status(500).json({success: false, msg: "Unable to create User."});
+          }
         });
         var student = new Student({
           enrollment: req.body.enrollment,
@@ -33,10 +33,11 @@ var addUser = function(req, res){
           semester: req.body.semester
         });
         student.save(function(err){
-          if(err)
-            res.json({success: false, msg: "Unable to create User."});
+          if(err){
+            res.status(500).json({success: false, msg: "Unable to create User."});
+          }
           else
-            res.json({success: true, msg: "New User Created."});
+            res.status(200).json({success: true, msg: "New User Created."});
         });
       }
     });

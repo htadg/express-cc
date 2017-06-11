@@ -10,7 +10,6 @@ router.use(function(req, res, next){
   try{
     req.body = JSON.parse(Object.keys(req.body)[0]);
   }catch(err){
-    console.log(err);
     req.body = req.body;
   }
   next();
@@ -26,14 +25,14 @@ router.use(/\/((?!(addUser)|(authenticate)).)*/, function(req, res, next){
     })
   }
   else{
-    res.json({success: false, msg: "Unauthorized Access"});
+    res.status(400).json({success: false, msg: "Unauthorized Access"});
   }
 });
 
 
 router.post('/authenticate', authenticate);
 router.post('/addUser', addUser);
-router.post('/getUsers', getUsers);
+router.get('/getUsers', getUsers);
 
 
 module.exports = router;

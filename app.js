@@ -14,8 +14,8 @@ mongoose.connect(process.env.DATABASE_URL);
 var app = express();
 
 require('dotenv').config();
-
-app.use(logger('dev'));
+if(process.env.NODE_ENV == 'DEVELOPMENT')
+  app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -44,6 +44,5 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(port);
-console.log("Listening at => http://localhost:" + port);
 
 module.exports = app;
