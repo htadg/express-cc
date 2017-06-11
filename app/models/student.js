@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var Student = mongoose.model('Student', new Schema({
+var Student = new Schema({
   enrollment: {
     type: String,
     required: true
@@ -33,7 +33,23 @@ var Student = mongoose.model('Student', new Schema({
   father_name: {
     type: String,
     required: false
+  },
+  created_at: {
+    type: Date
+  },
+  updated_at: {
+    type: Date
   }
-}));
+});
 
-module.exports = Student;
+Student.pre('save', function(next){
+  var user = this;
+  now = new Date();
+  user.updated_at = now;
+  if ( !user.created_at ) {
+    user.created_at = now;
+  }
+  next();
+});
+
+module.exports = mongoose.model('Student', Student);
